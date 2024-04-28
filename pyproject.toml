@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "nombre-de-tu-proyecto"
+version = "0.1.0"
+description = "Descripción de tu proyecto"
+authors = ["Tu Nombre <tu.email@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pymongo = "*"
+flask = "*"
+six = "*"
+kafka-python = { git = "https://github.com/dpkp/kafka-python.git" }
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

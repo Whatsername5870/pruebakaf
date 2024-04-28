@@ -1,0 +1,6 @@
+kafka-python
+pymongo
+flask
+six
+# Hay un error con la librería six de kafka-python, busqué la última versión pero aún no está lanzada públicamente, 
+#Acá la encontré en un repositorio, pip install git+https://github.com/dpkp/kafka-python.git

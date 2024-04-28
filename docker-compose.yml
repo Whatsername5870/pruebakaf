@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:29092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+
+  mongodb:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  app:
+    build: .
+    restart: always
+    depends_on:
+      - kafka
+      - mongodb
+    ports:
+      - "5000:5000"
+    environment:
+      KAFKA_BROKER: kafka:29092
+      MONGODB_URI: mongodb://root:example@mongodb:27017/chat_app
+      MONGO_DB_USER: root
+      MONGO_DB_PASSWORD: example
+      MONGO_DB_HOST: mongodb
+      MONGO_DB_PORT: 27017
+    volumes:
+      - .:/app
+    command: ["python", "app.py"]
+
+volumes:
+  mongodb_data:
+
+networks:
+  default:
+    name: kafka_network
+    driver: bridge
