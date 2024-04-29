@@ -3,10 +3,15 @@ FROM python:3.9-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update && apt-get install -y curl git
+# Actualiza los paquetes y instala curl y git
+RUN apt-get update \
+    && apt-get install -y curl git
 
-# Instala Poetry
+# Instalar Poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Asegúrate de que git está instalado correctamente
+RUN git --version
 
 ENV PATH="${PATH}:/root/.local/bin"
 
