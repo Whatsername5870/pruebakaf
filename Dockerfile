@@ -3,6 +3,10 @@ FROM python:3.9-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+
+RUN pip install git+https://github.com/dpkp/kafka-python.git
+
+
 # Actualiza los paquetes y instala curl y git
 RUN apt-get update \
     && apt-get install -y curl git
